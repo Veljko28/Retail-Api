@@ -13,6 +13,10 @@ namespace Retail_Api.Models.Requests
 
 		[Required]
 		public string Description { get; set; }
+
+		[Required]
+		public Decimal RetailPrice { get; set; }
+
 		[Required]
 		public DateTime CreateDate { get; set; } = DateTime.UtcNow;
 

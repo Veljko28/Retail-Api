@@ -17,7 +17,7 @@ namespace Retail_Api.Models
 		public int Quantity { get; set; } = 1;
 
 		[Required]
-		public Decimal PurchasePrice { get; set; }
+		public decimal PurchasePrice { get; set; }
 
 		[Required]
 		public DateTime PurchaseDate { get; set; } = DateTime.UtcNow;

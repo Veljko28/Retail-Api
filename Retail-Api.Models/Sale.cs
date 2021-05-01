@@ -18,13 +18,13 @@ namespace Retail_Api.Models
 		public DateTime SaleDate { get; set; }
 
 		[Required]
-		public Decimal SubTotal { get; set; }
+		public decimal SubTotal { get; set; }
 
 		[Required]
-		public Decimal Tax { get; set; }
+		public decimal Tax { get; set; }
 
 		[Required]
-		public Decimal Total { get; set; }
+		public decimal Total { get; set; }
 
 	}
 }

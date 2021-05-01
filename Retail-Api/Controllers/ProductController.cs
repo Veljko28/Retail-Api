@@ -73,11 +73,21 @@ namespace Retail_Api.Controllers
 
 
 		[HttpPatch(Routes.Products.UpdateById)]
-		public async Task<IActionResult> Update([FromBody] Product entity)
+		public async Task<IActionResult> Update([FromBody] ProductRequest entity, [FromRoute] int productId)
 		{
-			Product updatedProduct = await _products.updateAsync(entity);
+			Product givenProduct = new Product
+			{
+				Id = productId,
+				ProductName = entity.ProductName,
+				Description = entity.Description,
+				RetailPrice = entity.RetailPrice,
+				CreateDate = entity.CreateDate,
+				LastModified = DateTime.UtcNow
+			};
 
-			if (updatedProduct != entity)
+			Product updatedProduct = await _products.updateAsync(givenProduct);
+
+			if (updatedProduct == null)
 			{
 				return BadRequest("Error while trying to update the product");
 			}
