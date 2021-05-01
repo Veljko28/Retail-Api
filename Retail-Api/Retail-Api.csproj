@@ -11,4 +11,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Retail-Api.Models\Retail-Api.Models.csproj" />
+    <ProjectReference Include="..\Retail-Api.Repositories\Retail-Api.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>
