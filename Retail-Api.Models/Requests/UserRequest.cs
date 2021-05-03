@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Retail_Api.Models
+namespace Retail_Api.Models.Requests
 {
-	public class User
+	public class UserRequest
 	{
-		[Required]
-		[MaxLength(128)]
-		public string Id { get; set; }
 		[Required]
 		[MaxLength(50)]
 		public string FirstName { get; set; }
