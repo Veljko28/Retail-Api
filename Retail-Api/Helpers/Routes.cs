@@ -7,7 +7,7 @@ namespace Retail_Api.Helpers
 {
 	public static class Routes
 	{
-		public const string Version = "v1";
+		public const string Version = "/api/v1";
 
 		public static class Products
 		{
@@ -24,5 +24,13 @@ namespace Retail_Api.Helpers
 			public const string UpdateById = Version + RouteType + "/{productId}";
 
 		}
+		public static class Account
+		{
+			public const string Login = Version + "/login";
+
+			public const string Register = Version + "/Register";
+
+		}
+
 	}
 }
