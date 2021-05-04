@@ -20,6 +20,7 @@ namespace Retail_Api.Installers
 
 			services.AddSingleton(JwtSettings);
 
+
 			services.AddAuthentication(x =>
 			{
 				x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

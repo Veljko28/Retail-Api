@@ -28,7 +28,7 @@ namespace Retail_Api.Helpers
 		{
 			public const string Login = Version + "/login";
 
-			public const string Register = Version + "/Register";
+			public const string Register = Version + "/register";
 
 		}
 
