@@ -8,8 +8,8 @@ namespace Retail_Api.Models
 	public class User
 	{
 		[Required]
-		[MaxLength(128)]
-		public string Id { get; set; }
+		public int Id { get; set; }
+
 		[Required]
 		[MaxLength(50)]
 		public string FirstName { get; set; }
