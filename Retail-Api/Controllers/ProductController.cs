@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retail_Api.Helpers;
 using Retail_Api.Models;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Retail_Api.Controllers
 {
-	[Authorize]
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	public class ProductController : Controller
 	{
 		private IProductRepository _products;
