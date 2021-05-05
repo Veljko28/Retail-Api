@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Retail_Api.Controllers
 {
-	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	public class ProductController : Controller
 	{
 		private IProductRepository _products;
@@ -46,6 +46,18 @@ namespace Retail_Api.Controllers
 			return Ok(product);
 		}
 
+		[HttpGet(Routes.Products.GetByName)]
+		public async Task<IActionResult> GetByName(string productName)
+		{
+			IEnumerable<Product> product = await _products.getByNameAsync(productName);
+			if (product.FirstOrDefault() == null)
+			{
+				return NotFound("There is no product with name :" + productName);
+			}
+
+			return Ok(product);
+		}
+
 
 		[HttpPost(Routes.Products.Add)]
 		public async Task<IActionResult> Add([FromBody] ProductRequest entity)
@@ -73,6 +85,7 @@ namespace Retail_Api.Controllers
 
 			return Ok("Succefully deleted product with Id: " + productId);
 		}
+
 
 
 		[HttpPatch(Routes.Products.UpdateById)]

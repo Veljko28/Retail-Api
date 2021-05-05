@@ -76,6 +76,19 @@ namespace Retail_Api.Repositories.Implementations
 			}
 		}
 
+
+		public async Task<IEnumerable<Product>> getByNameAsync(string Name)
+		{
+			string sql = "SELECT * FROM Product WHERE ProductName LIKE @ProductName";
+
+			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+			{
+				await db.OpenAsync();
+				var products = await db.QueryAsync<Product>(sql, new { ProductName = '%' + Name + '%' });
+				return products;
+			}
+		}
+
 		public async Task<Product> updateAsync(Product entity)
 		{
 			string sql = "UPDATE Product SET ProductName = @ProductName, Description = @Description, RetailPrice = @RetailPrice,  CreateDate = @CreateDate, LastModified = @LastModified WHERE Id = @Id";
