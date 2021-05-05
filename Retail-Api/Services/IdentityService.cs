@@ -112,7 +112,7 @@ namespace Retail_Api.Models.Services
 					new Claim(JwtRegisteredClaimNames.Email, email),
 					new Claim("id", loggedInUser.Id.ToString())
 				}),
-				Expires = DateTime.UtcNow.AddHours(2),
+				Expires = DateTime.UtcNow.AddDays(2),
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 			};
 

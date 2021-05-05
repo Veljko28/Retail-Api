@@ -21,13 +21,7 @@ namespace Retail_Api.Installers
 			services.AddSingleton(JwtSettings);
 
 
-			services.AddAuthentication(x =>
-			{
-				x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-				x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-				x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-			}).AddJwtBearer(x => {
+			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x => {
 				x.SaveToken = true;
 				x.TokenValidationParameters = new TokenValidationParameters
 				{
@@ -40,6 +34,8 @@ namespace Retail_Api.Installers
 				};
 
 			});
+
+			services.AddAuthorization();
 		}
 	}
 }
