@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Retail_Api.Models
+namespace Retail_Api.Models.Requests
 {
-	public class Sale
+	public class SaleRequest
 	{
-		[Required]
-		public int Id { get; set; }
-
 		[Required]
 		public int CashierId { get; set; }
 
@@ -24,6 +21,5 @@ namespace Retail_Api.Models
 
 		[Required]
 		public decimal Total { get; set; }
-
 	}
 }
