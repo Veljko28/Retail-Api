@@ -17,6 +17,7 @@ namespace Retail_Api.Installers
 			services.AddSingleton<IProductRepository, ProductRepository>();
 			services.AddSingleton<IUserRepository, UserRepository>();
 			services.AddScoped<IIdentityService, IdentityService>();
+			services.AddScoped<ISaleRepository, SaleRepository>();
 		}
 	}
 }
