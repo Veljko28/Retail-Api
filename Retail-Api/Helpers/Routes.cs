@@ -44,6 +44,19 @@ namespace Retail_Api.Helpers
 
 			public const string GetByDate = Version + RouteType + "/date";
 
+			public const string GetById = Version + RouteType + "/{saleId}";
+
+		}
+
+		public static class SaleDetail
+		{
+			public const string RouteType = "/saledetail";
+
+			public const string CreateDetail = Version + RouteType + "/create";
+
+			public const string All = Version + RouteType + "/all";
+
+			public const string GetById = Version + RouteType + "/{saleDetailId}";
 		}
 
 	}
