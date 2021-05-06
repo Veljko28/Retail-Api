@@ -58,5 +58,20 @@ namespace Retail_Api.Controllers
 
 			return Ok(sale);
 		}
+
+
+		[HttpGet(Routes.Sale.GetById)]
+		public async Task<IActionResult> GetById(int saleId)
+		{
+			Sale sale = await _sales.getByIdAsync(saleId);
+
+			if (sale == null)
+			{
+				return BadRequest("Cannot find sale with id :" + saleId);
+			}
+
+			return Ok(sale);
+		}
+
 	}
 }
