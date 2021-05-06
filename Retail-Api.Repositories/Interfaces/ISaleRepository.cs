@@ -11,6 +11,8 @@ namespace Retail_Api.Repositories.Interfaces
 	{
 		Task<Sale> createAsync(SaleRequest saleRequest);
 
+		Task<Sale> getByIdAsync(int id);
+
 		Task<IEnumerable<Sale>> getAllAsync();
 
 		Task<IEnumerable<Sale>> getSalesByDateAsync(string date);

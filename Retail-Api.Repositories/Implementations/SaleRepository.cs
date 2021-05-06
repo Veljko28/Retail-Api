@@ -3,11 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
 using Retail_Api.Repositories.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Retail_Api.Repositories.Implementations
@@ -50,10 +48,25 @@ namespace Retail_Api.Repositories.Implementations
 			}
 		}
 
+		public async Task<Sale> getByIdAsync(int id)
+		{
+			string sql = "SELECT * FROM Sale WHERE Id = @Id";
+
+			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+			{
+				await db.OpenAsync();
+
+				Sale result = (await db.QueryAsync<Sale>(sql, new { Id = id })).FirstOrDefault();
+
+				return result;
+			}
+
+		}
+
 		public async Task<IEnumerable<Sale>> getSalesByDateAsync(string date)
 		{
 			string sql = "SELECT * FROM Sale WHERE SUBSTRING(CONVERT(VARCHAR(25), SaleDate, 126),0,11) = @SaleDate";
-
+			
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
