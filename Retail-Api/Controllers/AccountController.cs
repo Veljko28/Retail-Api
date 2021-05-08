@@ -9,6 +9,7 @@ using Retail_Api.Models.Services;
 using Retail_Api.Models;
 using System.Text;
 using Retail_Api.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Retail_Api.Controllers
 {
@@ -22,7 +23,7 @@ namespace Retail_Api.Controllers
 			_identity = identity;
 		}
 
-		[HttpPost(Routes.Account.Register)]
+		[HttpPost(Routes.AccountRoutes.Register)]
 		public async Task<IActionResult> Register([FromBody] UserRequest request)
 		{
 			var response = await _identity.RegisterAsync(request);
@@ -36,7 +37,7 @@ namespace Retail_Api.Controllers
 		}
 
 
-		[HttpPost(Routes.Account.Login)]
+		[HttpPost(Routes.AccountRoutes.Login)]
 		public async Task<IActionResult> Login([FromBody] LoginInfo info)
 		{
 			var response = await _identity.LoginAsync(info.Email, info.Password);
@@ -47,6 +48,12 @@ namespace Retail_Api.Controllers
 			}
 
 			return Ok(response);
+		}
+
+		[HttpGet("api/test")]
+		public IActionResult test()
+		{
+			return Ok(HttpContext.User.Identity);
 		}
 	}
 }
