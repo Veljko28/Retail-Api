@@ -78,7 +78,7 @@ namespace Retail_Api.Models.Services
 
 
 		}
-		public async Task<string> LoginAsync(string email, string password)
+		public async Task<TokenResponse> LoginAsync(string email, string password)
 		{
 			User loggedInUser = new User();
 
@@ -118,7 +118,11 @@ namespace Retail_Api.Models.Services
 
 			var token = tokenHandler.CreateToken(tokenDescriptor);
 
-			return tokenHandler.WriteToken(token);
+			return new TokenResponse
+			{
+				Token = tokenHandler.WriteToken(token),
+				Expires = DateTime.UtcNow.AddDays(2).ToString(),
+			};
 		}
 	}
 }
