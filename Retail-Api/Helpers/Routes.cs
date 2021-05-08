@@ -9,7 +9,7 @@ namespace Retail_Api.Helpers
 	{
 		public const string Version = "/api/v1";
 
-		public static class Products
+		public static class ProductRoutes
 		{
 			public const string RouteType = "/product";
 
@@ -26,7 +26,7 @@ namespace Retail_Api.Helpers
 			public const string UpdateById = Version + RouteType + "/{productId}";
 
 		}
-		public static class Account
+		public static class AccountRoutes
 		{
 			public const string Login = Version + "/login";
 
@@ -34,7 +34,7 @@ namespace Retail_Api.Helpers
 
 		}
 
-		public static class Sale
+		public static class SaleRoutes
 		{
 			public const string RouteType = "/sale";
 
@@ -48,7 +48,7 @@ namespace Retail_Api.Helpers
 
 		}
 
-		public static class SaleDetail
+		public static class SaleDetailRoutes
 		{
 			public const string RouteType = "/saledetail";
 
@@ -59,5 +59,18 @@ namespace Retail_Api.Helpers
 			public const string GetById = Version + RouteType + "/{saleDetailId}";
 		}
 
+
+
+		public static class InventoryRoutes
+		{
+			public const string RouteType = "/inventory";
+
+			public const string All = Version + RouteType + "/all";
+
+			public const string Add = Version + RouteType + "/add";
+
+			public const string GetById = Version + RouteType + "/{invId}";
+
+		}
 	}
 }
