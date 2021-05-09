@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Retail_Api.Controllers
 {
-	//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	public class ProductController : Controller
 	{
 		private IProductRepository _products;
@@ -21,7 +21,7 @@ namespace Retail_Api.Controllers
 			_products = products;
 		}
 
-		[HttpGet(Routes.Products.GetAll)]
+		[HttpGet(Routes.ProductRoutes.GetAll)]
 		public async Task<IActionResult> GetAll()
 		{
 			IEnumerable<Product> products = await _products.getAllAsync();
@@ -34,7 +34,7 @@ namespace Retail_Api.Controllers
 		}
 
 
-		[HttpGet(Routes.Products.GetById)]
+		[HttpGet(Routes.ProductRoutes.GetById)]
 		public async Task<IActionResult> GetById(int productId)
 		{
 			Product product = await _products.getByIdAsync(productId);
@@ -46,7 +46,7 @@ namespace Retail_Api.Controllers
 			return Ok(product);
 		}
 
-		[HttpGet(Routes.Products.GetByName)]
+		[HttpGet(Routes.ProductRoutes.GetByName)]
 		public async Task<IActionResult> GetByName(string productName)
 		{
 			IEnumerable<Product> product = await _products.getByNameAsync(productName);
@@ -59,7 +59,7 @@ namespace Retail_Api.Controllers
 		}
 
 
-		[HttpPost(Routes.Products.Add)]
+		[HttpPost(Routes.ProductRoutes.Add)]
 		public async Task<IActionResult> Add([FromBody] ProductRequest entity)
 		{
 			var made = await _products.addAsync(entity);
@@ -73,7 +73,7 @@ namespace Retail_Api.Controllers
 
 
 
-		[HttpDelete(Routes.Products.DeleteById)]
+		[HttpDelete(Routes.ProductRoutes.DeleteById)]
 		public async Task<IActionResult> Delete(int productId)
 		{
 			bool deleted = await _products.deleteAsync(productId);
@@ -88,7 +88,7 @@ namespace Retail_Api.Controllers
 
 
 
-		[HttpPatch(Routes.Products.UpdateById)]
+		[HttpPatch(Routes.ProductRoutes.UpdateById)]
 		public async Task<IActionResult> Update([FromBody] ProductRequest entity, [FromRoute] int productId)
 		{
 			Product givenProduct = new Product

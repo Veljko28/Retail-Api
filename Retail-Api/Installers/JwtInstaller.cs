@@ -21,8 +21,14 @@ namespace Retail_Api.Installers
 			services.AddSingleton(JwtSettings);
 
 
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x => {
+			services.AddAuthentication(x =>
+			{
+				x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+			}).AddJwtBearer("Bearer", x => {
 				x.SaveToken = true;
+				x.RequireHttpsMetadata = false;
 				x.TokenValidationParameters = new TokenValidationParameters
 				{
 					ValidateIssuerSigningKey = true,
