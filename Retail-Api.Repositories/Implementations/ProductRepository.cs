@@ -24,8 +24,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<Product> addAsync(ProductRequest entity)
 		{
-			string sql = "INSERT INTO Product (ProductName, Description, RetailPrice, CreateDate, LastModified)" +
-				" VALUES (@ProductName, @Description, @RetailPrice, @CreateDate, @LastModified)";
+			string sql = "exec [AddProduct] @ProductName, @Description, @RetailPrice, @CreateDate, @LastModified";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -41,7 +40,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<bool> deleteAsync(int id)
 		{
-			string sql = "DELETE FROM Product WHERE Id = @Id";
+			string sql = "exec [DeleteProduct] @Id";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -54,7 +53,7 @@ namespace Retail_Api.Repositories.Implementations
 		public async Task<IEnumerable<Product>> getAllAsync()
 		{
 
-			string sql = "SELECT * FROM Product";
+			string sql = "exec [GetProducts]";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -66,7 +65,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<Product> getByIdAsync(int id)
 		{
-			string sql = "SELECT * FROM Product WHERE Id = @Id";
+			string sql = "exec [GetProductById] @Id";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -79,7 +78,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<IEnumerable<Product>> getByNameAsync(string Name)
 		{
-			string sql = "SELECT * FROM Product WHERE ProductName LIKE @ProductName";
+			string sql = "exec [GetProductByName] @ProductName";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -91,7 +90,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<Product> updateAsync(Product entity)
 		{
-			string sql = "UPDATE Product SET ProductName = @ProductName, Description = @Description, RetailPrice = @RetailPrice,  CreateDate = @CreateDate, LastModified = @LastModified WHERE Id = @Id";
+			string sql = "exec [UpdateProductById] @Id, @ProductName, @Description, @RetailPrice, @CreateDate, @LastModified";
 
 			if (await getByIdAsync(entity.Id) == null)
 			{
