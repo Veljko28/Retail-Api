@@ -50,10 +50,5 @@ namespace Retail_Api.Controllers
 			return Ok(response);
 		}
 
-		[HttpGet("api/test")]
-		public IActionResult test()
-		{
-			return Ok(HttpContext.User.Identity);
-		}
 	}
 }
