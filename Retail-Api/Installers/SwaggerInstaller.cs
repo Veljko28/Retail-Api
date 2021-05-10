@@ -20,7 +20,7 @@ namespace Retail_Api.Installers
 				c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 				{
 					Description = "JWT Authentication header using Bearer Scheme",
-					Name = "Authentication",
+					Name = "Authorization",
 					In = ParameterLocation.Header,
 					Type = SecuritySchemeType.ApiKey,
 				});
@@ -43,6 +43,15 @@ namespace Retail_Api.Installers
 						new List<string>()
 					}
 				});
+			});
+
+			services.AddCors(options =>
+			{
+				options.AddPolicy("CorsPolicy",//Allow Cross origin
+					builder => builder.AllowAnyOrigin()
+					.AllowAnyMethod()
+					.AllowAnyHeader()
+					.AllowCredentials());
 			});
 		}
 	}

@@ -14,11 +14,12 @@ namespace Retail_Api.Installers
 	{
 		public void InstallServices(IConfiguration configuration, IServiceCollection services)
 		{
+			services.AddScoped<IIdentityService, IdentityService>();
 			services.AddSingleton<IProductRepository, ProductRepository>();
 			services.AddSingleton<IUserRepository, UserRepository>();
-			services.AddScoped<IIdentityService, IdentityService>();
 			services.AddSingleton<ISaleRepository, SaleRepository>()
-				.AddSingleton<ISaleDetailRepository, SaleDetailRepository>();
+				.AddSingleton<ISaleDetailRepository, SaleDetailRepository>()
+				.AddSingleton<IInventoryRepository, InventoryRepository>();
 		}
 	}
 }
