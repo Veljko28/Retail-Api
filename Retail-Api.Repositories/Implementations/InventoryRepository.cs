@@ -25,7 +25,7 @@ namespace Retail_Api.Repositories.Implementations
 			using (SqlConnection db = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
-				string sql = "INSERT INTO Inventory (ProductId,Quantity,PurchasePrice,PurchaseDate) VALUES (@ProductId,@Quantity,@PurchasePrice,@PurchaseDate)";
+				string sql = "exec [AddToInventory] @ProductId,@Quantity,@PurchasePrice,@PurchaseDate";
 				int rowsModified = await db.ExecuteAsync(sql, request);
 				if (rowsModified > 0)
 				{
@@ -42,7 +42,7 @@ namespace Retail_Api.Repositories.Implementations
 			using (SqlConnection db = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
-				string sql = "SELECT * FROM Inventory";
+				string sql = "exec [GetInventory]";
 				return await db.QueryAsync<Inventory>(sql);
 			}
 		}
@@ -52,7 +52,7 @@ namespace Retail_Api.Repositories.Implementations
 			using (SqlConnection db = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
-				string sql = "SELECT * FROM Inventory WHERE Id = @Id";
+				string sql = "exec [GetInventoryById] @Id";
 				return (await db.QueryAsync<Inventory>(sql, new {Id = id } )).FirstOrDefault();
 			}
 		}

@@ -20,8 +20,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<Sale> createAsync(SaleRequest saleRequest)
 		{
-			string sql = "INSERT INTO Sale (CashierId, SaleDate, SubTotal, Tax, Total)" +
-		" VALUES (@CashierId, @SaleDate, @SubTotal, @Tax, @Total)";
+			string sql = "exec [AddSale] @CashierId, @SaleDate, @SubTotal, @Tax, @Total";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -37,7 +36,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<IEnumerable<Sale>> getAllAsync()
 		{
-			string sql = "SELECT * FROM Sale";
+			string sql = "exec [GetSales]";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -50,7 +49,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<Sale> getByIdAsync(int id)
 		{
-			string sql = "SELECT * FROM Sale WHERE Id = @Id";
+			string sql = "exec [GetSaleById] @Id";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -65,7 +64,7 @@ namespace Retail_Api.Repositories.Implementations
 
 		public async Task<IEnumerable<Sale>> getSalesByDateAsync(string date)
 		{
-			string sql = "SELECT * FROM Sale WHERE SUBSTRING(CONVERT(VARCHAR(25), SaleDate, 126),0,11) = @SaleDate";
+			string sql = "exec [GetSaleByDate] @SaleDate";
 			
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
