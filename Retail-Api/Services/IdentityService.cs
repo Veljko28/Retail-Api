@@ -55,7 +55,7 @@ namespace Retail_Api.Models.Services
 			//}
 
 
-			string sql = "INSERT INTO [dbo].[User] ( FirstName, LastName, Password, EmailAddress, DateCreated) VALUES (@FirstName, @LastName, @Password, @EmailAddress, @DateCreated);";
+			string sql = "exec [AddUser] @FirstName, @LastName, @Password, @EmailAddress, @DateCreated";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
@@ -82,14 +82,14 @@ namespace Retail_Api.Models.Services
 		{
 			User loggedInUser = new User();
 
-			string sql = "SELECT * FROM [dbo].[User] WHERE EmailAddress = @Email AND Password = @Password";
+			string sql = "exec [GetUser] @EmailAddress, @Password";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
 				var result = await db.QueryAsync<User>(sql, new
 				{
-					Email = email,
+					EmailAddress = email,
 					Password = password
 				});
 				loggedInUser = result.FirstOrDefault();
