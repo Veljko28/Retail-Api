@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Retail_Api.Helpers;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Retail_Api.Controllers
 {
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	public class SaleDetailController : Controller
 	{
 		private readonly ISaleDetailRepository _saleDetails;
@@ -18,7 +21,7 @@ namespace Retail_Api.Controllers
 			_saleDetails = saleDetails;
 		}
 
-		[HttpGet(Routes.SaleDetail.All)]
+		[HttpGet(Routes.SaleDetailRoutes.All)]
 		public async Task<IActionResult> All()
 		{
 			IEnumerable<SaleDetail> sales = await _saleDetails.getAllAsync();
@@ -32,7 +35,7 @@ namespace Retail_Api.Controllers
 		}
 
 
-		[HttpPost(Routes.SaleDetail.CreateDetail)]
+		[HttpPost(Routes.SaleDetailRoutes.CreateDetail)]
 		public async Task<IActionResult> Create([FromBody] SaleDetailRequest saleReq)
 		{
 			SaleDetail sale = await _saleDetails.createAsync(saleReq);
@@ -46,7 +49,7 @@ namespace Retail_Api.Controllers
 		}
 
 
-		[HttpGet(Routes.SaleDetail.GetById)]
+		[HttpGet(Routes.SaleDetailRoutes.GetById)]
 		public async Task<IActionResult> GetById(int saleDetailId)
 		{
 			SaleDetail sale = await _saleDetails.getByIdAsync(saleDetailId);
