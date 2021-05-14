@@ -23,17 +23,23 @@ namespace Retail_Api.Controllers
 			_identity = identity;
 		}
 
+
+		public IActionResult genericResponse<T>(string errorMessage, T response)
+		{
+			if (response == null)
+			{
+				return BadRequest(errorMessage);
+			}
+
+			return Ok(response);
+		}
+
 		[HttpPost(Routes.AccountRoutes.Register)]
 		public async Task<IActionResult> Register([FromBody] UserRequest request)
 		{
 			var response = await _identity.RegisterAsync(request);
 
-			if (response == null)
-			{
-				return BadRequest("Cannot register this user");
-			}
-
-			return Ok(response);
+			return genericResponse("Cannot register this user", response);
 		}
 
 
@@ -42,13 +48,17 @@ namespace Retail_Api.Controllers
 		{
 			var response = await _identity.LoginAsync(info.Email, info.Password);
 
-			if (response == null)
-			{
-				return BadRequest("Invalid login info");
-			}
-
-			return Ok(response);
+			return genericResponse("Invalid login info", response);
 		}
+
+
+		[HttpPost(Routes.AccountRoutes.Refresh)]
+		public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
+		{
+			var response = await _identity.RefreshTokenAsync(request.Token, request.RefreshToken);
+
+			return genericResponse("Cannot refresh token", response);
+		} 
 
 	}
 }
