@@ -32,7 +32,7 @@ namespace Retail_Api.Services
 			}
 		}
 
-		public async Task<RefreshToken> findTokenAsync(string token)
+		public async Task<RefreshToken> findTokenAsync(string Token)
 		{
 			string sql = "exec [FindRefreshToken] @Token";
 
@@ -40,7 +40,7 @@ namespace Retail_Api.Services
 			{
 				await db.OpenAsync();
 
-				var response = await db.QueryAsync<RefreshToken>(sql, new { Token = token });
+				var response = await db.QueryAsync<RefreshToken>(sql,new { Token });
 
 				return response.FirstOrDefault();
 			}

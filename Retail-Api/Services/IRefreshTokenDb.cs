@@ -8,7 +8,7 @@ namespace Retail_Api.Services
 {
 	public interface IRefreshTokenDb
 	{
-		Task<RefreshToken> findTokenAsync(string token);
+		Task<RefreshToken> findTokenAsync(string Token);
 
 		Task<bool> addTokenAsync(RefreshToken refreshToken);
 
