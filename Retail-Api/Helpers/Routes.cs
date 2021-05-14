@@ -32,6 +32,8 @@ namespace Retail_Api.Helpers
 
 			public const string Register = Version + "/register";
 
+			public const string Refresh = Version + "/refresh";
+
 		}
 
 		public static class SaleRoutes
