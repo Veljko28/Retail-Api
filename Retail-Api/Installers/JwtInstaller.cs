@@ -20,6 +20,15 @@ namespace Retail_Api.Installers
 
 			services.AddSingleton(JwtSettings);
 
+			var tokenValidationParameters = new TokenValidationParameters
+			{
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtSettings.Secret)),
+				ValidateIssuer = false,
+				ValidateAudience = false,
+				RequireExpirationTime = false,
+				ValidateLifetime = true
+			};
 
 			services.AddAuthentication(x =>
 			{
@@ -29,16 +38,7 @@ namespace Retail_Api.Installers
 			}).AddJwtBearer("Bearer", x => {
 				x.SaveToken = true;
 				x.RequireHttpsMetadata = false;
-				x.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtSettings.Secret)),
-					ValidateIssuer = false,
-					ValidateAudience = false,
-					RequireExpirationTime = false,
-					ValidateLifetime = true
-				};
-
+				x.TokenValidationParameters = tokenValidationParameters;
 			});
 
 			services.AddAuthorization();
