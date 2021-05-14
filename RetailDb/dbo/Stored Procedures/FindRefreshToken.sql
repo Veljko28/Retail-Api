@@ -2,7 +2,5 @@
 	@Token nvarchar(256)
 AS
 begin
-	SET NOCOUNT ON;
-
-	SELECT * FROM RefreshTokens WHERE @Token = Token;
+	SELECT * FROM [dbo].[RefreshTokens] WHERE Token = @Token;
 end
