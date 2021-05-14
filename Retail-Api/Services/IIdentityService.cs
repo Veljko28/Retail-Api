@@ -12,5 +12,6 @@ namespace Retail_Api.Models.Services
 	{
 		Task<UserRequest> RegisterAsync(UserRequest userRequest);
 		Task<TokenResponse> LoginAsync(string email, string password);
+		Task<TokenResponse> RefreshTokenAsync(string token, string refreshToken);
 	}
 }
