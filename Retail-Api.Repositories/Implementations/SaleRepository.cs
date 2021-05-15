@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Retail_Api.Models;
+using Retail_Api.Models.Services;
 using Retail_Api.Models.Requests;
 using Retail_Api.Repositories.Interfaces;
 using System.Collections.Generic;
@@ -38,28 +39,14 @@ namespace Retail_Api.Repositories.Implementations
 		{
 			string sql = "exec [GetSales]";
 
-			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-			{
-				await db.OpenAsync();
-
-				var sales = await db.QueryAsync<Sale>(sql);
-				return sales;
-			}
+			return await DbConnection.GenericConnectionAll<Sale>(sql, _configuration);
 		}
 
 		public async Task<Sale> getByIdAsync(int id)
 		{
 			string sql = "exec [GetSaleById] @Id";
 
-			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-			{
-				await db.OpenAsync();
-
-				Sale result = (await db.QueryAsync<Sale>(sql, new { Id = id })).FirstOrDefault();
-
-				return result;
-			}
-
+			return await DbConnection.GenericConnectionID<Sale>(id, sql, _configuration);
 		}
 
 		public async Task<IEnumerable<Sale>> getSalesByDateAsync(string date)
