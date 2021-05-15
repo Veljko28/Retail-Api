@@ -5,7 +5,7 @@
 	@Expires datetime2(7),
 	@Used bit,
 	@Invalidated bit,
-	@UserId int
+	@UserId nvarchar(128)
 AS
 begin
 	INSERT INTO [dbo].[RefreshTokens] (Token, JwtId, CreatedDate, Expires,Used, Invalidated, UserId)

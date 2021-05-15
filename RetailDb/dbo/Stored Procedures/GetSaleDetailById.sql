@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[GetSaleDetailById]
-	@Id int
+	@SaleId int
 AS
 begin
-	SELECT * FROM SaleDetail WHERE Id = @Id;
+	SELECT * FROM SaleDetail WHERE SaleId = @SaleId;
 end
