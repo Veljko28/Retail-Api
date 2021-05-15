@@ -50,13 +50,13 @@ namespace Retail_Api.Controllers
 
 
 		[HttpGet(Routes.SaleDetailRoutes.GetById)]
-		public async Task<IActionResult> GetById(int saleDetailId)
+		public async Task<IActionResult> GetById(int saleId)
 		{
-			SaleDetail sale = await _saleDetails.getByIdAsync(saleDetailId);
+			SaleDetail sale = await _saleDetails.getByIdAsync(saleId);
 
 			if (sale == null)
 			{
-				return BadRequest("Cannot find sale detail with id :" + saleDetailId);
+				return BadRequest("Cannot find sale detail with id :" + saleId);
 			}
 
 			return Ok(sale);
