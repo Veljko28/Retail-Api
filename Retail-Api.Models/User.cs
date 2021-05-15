@@ -8,7 +8,7 @@ namespace Retail_Api.Models
 	public class User
 	{
 		[Required]
-		public int Id { get; set; }
+		public string Id { get; set; }
 
 		[Required]
 		[MaxLength(50)]
@@ -24,6 +24,7 @@ namespace Retail_Api.Models
 
 		[Required]
 		[MaxLength(256)]
+		[EmailAddress]
 		public string EmailAddress { get; set; }
 
 		[Required]
