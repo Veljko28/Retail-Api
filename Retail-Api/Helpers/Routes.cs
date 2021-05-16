@@ -58,7 +58,7 @@ namespace Retail_Api.Helpers
 
 			public const string All = Version + RouteType + "/all";
 
-			public const string GetById = Version + RouteType + "/{saleDetailId}";
+			public const string GetById = Version + RouteType + "/{saleId}";
 		}
 
 
