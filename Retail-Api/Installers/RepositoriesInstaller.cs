@@ -19,9 +19,6 @@ namespace Retail_Api.Installers
 
 			services.AddSingleton<IProductRepository, ProductRepository>();
 
-			services.AddSingleton<IUserRepository, UserRepository>();
-
-
 			services.AddSingleton<ISaleRepository, SaleRepository>()
 				.AddSingleton<ISaleDetailRepository, SaleDetailRepository>()
 				.AddSingleton<IInventoryRepository, InventoryRepository>();
