@@ -27,7 +27,8 @@ namespace Retail_Api.Installers
 				ValidateIssuer = false,
 				ValidateAudience = false,
 				RequireExpirationTime = false,
-				ValidateLifetime = true
+				ValidateLifetime = true,
+				ClockSkew = TimeSpan.Zero
 			};
 
 			services.AddAuthentication(x =>
@@ -41,7 +42,15 @@ namespace Retail_Api.Installers
 				x.TokenValidationParameters = tokenValidationParameters;
 			});
 
-			services.AddAuthorization();
+			// Add Policy for claims and use it insted of CheckRole
+
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy("Administration", builder =>
+				 {
+					 builder.RequireClaim("adn", "true");
+				 });
+			});
 		}
 	}
 }
