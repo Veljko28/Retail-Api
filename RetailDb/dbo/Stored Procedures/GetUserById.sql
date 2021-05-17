@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[GetUserById]
-	@Id int
+	@Id nvarchar(128)
 AS
 begin
 	SELECT * FROM [dbo].[User] WHERE Id = @Id;

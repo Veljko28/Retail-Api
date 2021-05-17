@@ -5,7 +5,7 @@
 	@Expires datetime2(7),
 	@Used bit,
 	@Invalidated bit,
-	@UserId int
+	@UserId nvarchar(128)
 AS
 begin
 	UPDATE [dbo].[RefreshTokens] SET JwtId = @JwtId, CreatedDate = @CreatedDate, Expires = @Expires, Used = @Used,
