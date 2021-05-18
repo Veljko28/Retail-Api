@@ -29,7 +29,7 @@ namespace Retail_Api
 			services.InstallServicesInAssembly(Configuration);
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+	public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
