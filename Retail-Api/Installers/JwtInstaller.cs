@@ -50,6 +50,16 @@ namespace Retail_Api.Installers
 				 {
 					 builder.RequireClaim("adn", "true");
 				 });
+
+				options.AddPolicy("Managment", builder =>
+				{
+					builder.RequireClaim("mng", "true");
+				});
+
+				options.AddPolicy("Cashier", builder =>
+				{
+					builder.RequireClaim("csr", "true");
+				});
 			});
 		}
 	}
