@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using Retail_Api.Helpers;
 using System;
 using System.Linq;
@@ -13,18 +12,12 @@ using Dapper;
 using Microsoft.Extensions.Configuration;
 using Retail_Api.Models.Requests;
 using Retail_Api.Services;
+using Retail_Api.Repositories.Services;
 
 namespace Retail_Api.Models.Services
 {
 	public class IdentityService : IIdentityService
 	{
-		//private readonly UserManager<IdentityUser> _userManager;
-
-		//public IdentityService(UserManager<IdentityUser> userManager, JwtSettings jwtSettings)
-		//{
-		//	_userManager = userManager;
-		//	_jwtSettings = jwtSettings;
-		//}
 
 		private readonly JwtSettings _jwtSettings;
 		private readonly IConfiguration _configuration;
@@ -38,7 +31,7 @@ namespace Retail_Api.Models.Services
 		}
 
 
-		private async Task<User> getUserByIdAsync(int id)
+		private async Task<User> getUserByIdAsync(string id)
 		{
 			string sql = "exec [GetUserById] @Id";
 
@@ -53,81 +46,33 @@ namespace Retail_Api.Models.Services
 		}
 
 
-		private ClaimsPrincipal getPrincipalFromToken(string token)
+		
+
+		public void addRoleToList(string roleName,string roleClaim, List<string> roleNames, List<Claim> roleClaims)
 		{
-			var tokenHandler = new JwtSecurityTokenHandler();
-
-			try
+			if (roleNames.Contains(roleName))
 			{
-
-				var tokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Secret)),
-					ValidateIssuer = false,
-					ValidateAudience = false,
-					RequireExpirationTime = false,
-					ValidateLifetime = true
-				};
-
-				var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var validatedToken);
-				if (!isJwtWithValidSecurityAlgorithm(validatedToken))
-				{
-					return null;
-				}
-
-				return principal;
+				roleClaims.Add(new Claim(roleClaim, "true"));
 			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return null;
-			}
-			
 		}
-
-
-		private bool isJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
-		{
-			return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
-				jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
-		}
+	
 
 		public async Task<UserRequest> RegisterAsync(UserRequest userRequest)
 		{
-			//var existingUser = await _userManager.FindByEmailAsync(email);
 
-			//if (existingUser != null)
-			//{
-			//	return null;
-			//}
-
-			//var newUser = new IdentityUser()
-			//{
-			//	Email = email,
-			//	UserName = email,
-			//};
-
-			//var createdUser = await _userManager.CreateAsync(newUser, password);
-
-			//if (!createdUser.Succeeded)
-			//{
-			//	return null;
-			//}
-
-
-			string sql = "exec [AddUser] @FirstName, @LastName, @Password, @EmailAddress, @DateCreated";
+			string sql = "exec [AddUser] @Id, @FirstName, @LastName, @Password, @EmailAddress, @DateCreated";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
 				int rowsModified = await db.ExecuteAsync(sql, new {
+					Id = Guid.NewGuid().ToString(),
 					EmailAddress = userRequest.EmailAddress,
 					DateCreated = DateTime.UtcNow,
 					FirstName = userRequest.FirstName,
 					LastName = userRequest.LastName,
 					Password = userRequest.Password,
-				});
+				}); ;
 
 				if (rowsModified > 0)
 				{
@@ -163,18 +108,49 @@ namespace Retail_Api.Models.Services
 				return null;
 			}
 
+			var roles = await Roles.getUserRoles(loggedInUser.Id, _configuration);
+
+			List<string> roleNames = new List<string>();
+
+			foreach (Role r in roles)
+			{
+				roleNames.Add(await Roles.getRoleName(r.RoleId, _configuration));
+			}
+
 			JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
 			
 			byte[] key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
 
+			List<Claim> roleClaims = new List<Claim>
+			{
+				new Claim(JwtRegisteredClaimNames.Sub, email),
+				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new Claim(JwtRegisteredClaimNames.Email, email),
+				new Claim("id", loggedInUser.Id),
+			};
+		
+			foreach (string role in roleNames)
+			{
+				if (role == "Admin")
+				{
+					addRoleToList(role, "adn", roleNames, roleClaims);
+				}
+
+				if (role == "Manager")
+				{
+					addRoleToList(role, "mng", roleNames, roleClaims);
+				}
+
+				if (role == "Cashier")
+				{
+					addRoleToList(role, "csr", roleNames, roleClaims);
+				}
+			}
+		
+
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
-				Subject = new ClaimsIdentity(new[] {
-					new Claim(JwtRegisteredClaimNames.Sub, email),
-					new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-					new Claim(JwtRegisteredClaimNames.Email, email),
-					new Claim("id", loggedInUser.Id.ToString())
-				}),
+				Subject = new ClaimsIdentity(roleClaims),
 				Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 			};
@@ -185,7 +161,7 @@ namespace Retail_Api.Models.Services
 			{
 				Token = tokenHandler.WriteToken(token),
 				JwtId = token.Id,
-				UserId = loggedInUser.Id.ToString(),
+				UserId = loggedInUser.Id,
 				CreatedDate = DateTime.UtcNow,
 				Expires = DateTime.UtcNow.AddMonths(6),
 
@@ -208,7 +184,7 @@ namespace Retail_Api.Models.Services
 
 		public async Task<TokenResponse> RefreshTokenAsync(string token, string refreshToken)
 		{
-			var validatedToken = getPrincipalFromToken(token);
+			var validatedToken = CheckRole.getPrincipalFromToken(token, _configuration);
 
 			if (validatedToken == null)
 			{
@@ -244,7 +220,7 @@ namespace Retail_Api.Models.Services
 				return null;
 			}
 
-			User currentUser = await getUserByIdAsync(int.Parse(validatedToken.Claims.Single(x => x.Type == "id").Value));
+			User currentUser = await getUserByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
 
 			if (currentUser == null)
 			{
