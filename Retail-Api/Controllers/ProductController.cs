@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
@@ -16,12 +18,16 @@ namespace Retail_Api.Controllers
 	public class ProductController : Controller
 	{
 		private IProductRepository _products;
-		public ProductController(IProductRepository products)
+		private readonly IConfiguration _configuration;
+
+		public ProductController(IProductRepository products, IConfiguration configuration)
 		{
 			_products = products;
+			_configuration = configuration;
 		}
 
 		[HttpGet(Routes.ProductRoutes.GetAll)]
+		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> GetAll()
 		{
 			IEnumerable<Product> products = await _products.getAllAsync();
@@ -35,6 +41,7 @@ namespace Retail_Api.Controllers
 
 
 		[HttpGet(Routes.ProductRoutes.GetById)]
+		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> GetById(int productId)
 		{
 			Product product = await _products.getByIdAsync(productId);
@@ -47,6 +54,7 @@ namespace Retail_Api.Controllers
 		}
 
 		[HttpGet(Routes.ProductRoutes.GetByName)]
+		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> GetByName(string productName)
 		{
 			IEnumerable<Product> product = await _products.getByNameAsync(productName);
@@ -60,8 +68,16 @@ namespace Retail_Api.Controllers
 
 
 		[HttpPost(Routes.ProductRoutes.Add)]
+		[Authorize(Policy = "Managment")]
 		public async Task<IActionResult> Add([FromBody] ProductRequest entity)
 		{
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (!CheckRole.IsInRole(authorization, "Admin", _configuration) && !CheckRole.IsInRole(authorization, "Manager", _configuration))
+			{
+				return BadRequest("You don't have permission to add products");
+			}
+
 			var made = await _products.addAsync(entity);
 			if (made == null)
 			{
@@ -74,8 +90,17 @@ namespace Retail_Api.Controllers
 
 
 		[HttpDelete(Routes.ProductRoutes.DeleteById)]
+		[Authorize(Policy = "Admin,Managment")]
 		public async Task<IActionResult> Delete(int productId)
 		{
+
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (!CheckRole.IsInRole(authorization, "Admin", _configuration) && !CheckRole.IsInRole(authorization, "Manager", _configuration))
+			{
+				return BadRequest("You don't have permission to delete products");
+			}
+
 			bool deleted = await _products.deleteAsync(productId);
 
 			if (!deleted)
@@ -89,8 +114,17 @@ namespace Retail_Api.Controllers
 
 
 		[HttpPatch(Routes.ProductRoutes.UpdateById)]
+		[Authorize(Policy = "Admin,Managment")]
 		public async Task<IActionResult> Update([FromBody] ProductRequest entity, [FromRoute] int productId)
 		{
+
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (!CheckRole.IsInRole(authorization, "Admin", _configuration) && !CheckRole.IsInRole(authorization, "Manager", _configuration))
+			{
+				return BadRequest("You don't have permission to update products");
+			}
+
 			Product givenProduct = new Product
 			{
 				Id = productId,

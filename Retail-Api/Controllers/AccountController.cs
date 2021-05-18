@@ -1,26 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Retail_Api.Helpers;
 using Retail_Api.Models.Requests;
 using Retail_Api.Models.Services;
-using Retail_Api.Models;
-using System.Text;
-using Retail_Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Net.Http.Headers;
+using Microsoft.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 
 namespace Retail_Api.Controllers
 {
 	public class AccountController : Controller
 	{
 		private readonly IIdentityService _identity;
+		private readonly IConfiguration _configuration;
 
 
-		public AccountController(IIdentityService identity)
+		public AccountController(IIdentityService identity, IConfiguration configuration)
 		{
 			_identity = identity;
+			_configuration = configuration;
 		}
 
 
@@ -58,7 +57,22 @@ namespace Retail_Api.Controllers
 			var response = await _identity.RefreshTokenAsync(request.Token, request.RefreshToken);
 
 			return genericResponse("Cannot refresh token", response);
-		} 
+		}
+
+		[HttpGet("api/test/roles/{role}")]
+		[Authorize(Policy = "Administration")]
+		public IActionResult Roles([FromRoute] string role)
+		{
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (!CheckRole.IsInRole(authorization, role, _configuration))
+			{
+				return BadRequest("You are not in role: " + role);
+			}
+
+			return Ok("You are in role: " + role);
+		}
+
 
 	}
 }

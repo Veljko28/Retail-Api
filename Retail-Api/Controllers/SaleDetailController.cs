@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
@@ -16,12 +18,15 @@ namespace Retail_Api.Controllers
 	public class SaleDetailController : Controller
 	{
 		private readonly ISaleDetailRepository _saleDetails;
-		public SaleDetailController(ISaleDetailRepository saleDetails)
+		private readonly IConfiguration _configuration;
+		public SaleDetailController(ISaleDetailRepository saleDetails, IConfiguration configuration)
 		{
 			_saleDetails = saleDetails;
+			_configuration = configuration;
 		}
 
 		[HttpGet(Routes.SaleDetailRoutes.All)]
+		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> All()
 		{
 			IEnumerable<SaleDetail> sales = await _saleDetails.getAllAsync();
@@ -36,8 +41,16 @@ namespace Retail_Api.Controllers
 
 
 		[HttpPost(Routes.SaleDetailRoutes.CreateDetail)]
+		[Authorize(Policy = "Admin,Managment")]
 		public async Task<IActionResult> Create([FromBody] SaleDetailRequest saleReq)
 		{
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (!CheckRole.IsInRole(authorization, "Admin", _configuration) && !CheckRole.IsInRole(authorization, "Manager", _configuration))
+			{
+				return BadRequest("You don't have permission to add sales");
+			}
+
 			SaleDetail sale = await _saleDetails.createAsync(saleReq);
 
 			if (sale == null)
@@ -50,7 +63,8 @@ namespace Retail_Api.Controllers
 
 
 		[HttpGet(Routes.SaleDetailRoutes.GetById)]
-		public async Task<IActionResult> GetById(int saleId)
+		[Authorize(Policy = "Admin,Managment,Cashier")]
+		public async Task<IActionResult> GetById([FromRoute] int saleId)
 		{
 			SaleDetail sale = await _saleDetails.getByIdAsync(saleId);
 

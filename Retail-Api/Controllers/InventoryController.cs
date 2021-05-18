@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
@@ -16,13 +18,16 @@ namespace Retail_Api.Controllers
 	public class InventoryController : Controller
 	{
 		private readonly IInventoryRepository _inventory;
+		private readonly IConfiguration _configuration;
 
-		public InventoryController(IInventoryRepository inventory)
+		public InventoryController(IInventoryRepository inventory, IConfiguration configuration)
 		{
 			_inventory = inventory;
+			_configuration = configuration;
 		}
 
 		[HttpGet(Routes.InventoryRoutes.All)]
+		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> All()
 		{
 			IEnumerable<Inventory> inv =  await _inventory.getAllInInventoryAsync();
@@ -36,8 +41,15 @@ namespace Retail_Api.Controllers
 
 
 		[HttpPost(Routes.InventoryRoutes.Add)]
+		[Authorize(Policy = "Managment")]
 		public async Task<IActionResult> Add([FromBody] InventoryRequest request)
 		{
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (!CheckRole.IsInRole(authorization, "Admin", _configuration)){
+				return BadRequest("You don't have permission to add to the inventory");
+			}
+
 			Inventory inv = await _inventory.addToInventoryAsync(request);
 
 			if (inv == null)
@@ -49,6 +61,7 @@ namespace Retail_Api.Controllers
 
 
 		[HttpGet(Routes.InventoryRoutes.GetById)]
+		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> GetById([FromRoute] int invId)
 		{
 			Inventory inv = await _inventory.getByIdAsync(invId);
