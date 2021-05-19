@@ -108,13 +108,13 @@ namespace Retail_Api.Models.Services
 				return null;
 			}
 
-			var roles = await Roles.getUserRoles(loggedInUser.Id, _configuration);
+			var roles = await RoleRepository.getUserRolesAsync(loggedInUser.Id, _configuration);
 
 			List<string> roleNames = new List<string>();
 
 			foreach (Role r in roles)
 			{
-				roleNames.Add(await Roles.getRoleName(r.RoleId, _configuration));
+				roleNames.Add(await RoleRepository.getRoleNameAsync(r.RoleId, _configuration));
 			}
 
 			JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
