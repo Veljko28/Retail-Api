@@ -74,5 +74,18 @@ namespace Retail_Api.Helpers
 			public const string GetById = Version + RouteType + "/{invId}";
 
 		}
+
+		public static class RolesRoutes 
+		{
+			public const string RouteType = "/roles";
+
+			public const string GetUserRoles = Version + RouteType + "/{userId}";
+
+			public const string UserRole = Version + RouteType;
+
+			public const string GetRoleId = Version + RouteType + "/getId/{roleName}";
+
+		}
+
 	}
 }
