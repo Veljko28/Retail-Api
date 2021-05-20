@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net.Http.Headers;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Retail_Api.Controllers
 {
@@ -33,6 +34,42 @@ namespace Retail_Api.Controllers
 			return Ok(response);
 		}
 
+		[HttpGet("api/test/roles/{role}")]
+		[Authorize(Policy = "Administration")]
+		public IActionResult Roles([FromRoute] string role)
+		{
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (!CheckRole.IsInRole(authorization, role, _configuration))
+			{
+				return BadRequest("You are not in role: " + role);
+			}
+
+			return Ok("You are in role: " + role);
+		}
+
+
+		[HttpGet("api/test/CurrentUserId")]
+		[Authorize(Policy = "Administration")]
+		public IActionResult CurrentUserId()
+		{
+			var authorization = Request.Headers[HeaderNames.Authorization];
+
+			if (AuthenticationHeaderValue.TryParse(authorization, out var headerValue))
+			{
+				var token = headerValue.Parameter;
+				var validatedToken = CheckRole.getPrincipalFromToken(token, _configuration);
+				string userId = validatedToken.Claims.Single(x => x.Type == "id").Value;
+
+				if (userId != null)
+				{
+				return Ok(userId);
+
+				}
+			}
+
+			return BadRequest("Cannot get the id of the current user");
+		}
 		[HttpPost(Routes.AccountRoutes.Register)]
 		public async Task<IActionResult> Register([FromBody] UserRequest request)
 		{
@@ -57,20 +94,6 @@ namespace Retail_Api.Controllers
 			var response = await _identity.RefreshTokenAsync(request.Token, request.RefreshToken);
 
 			return genericResponse("Cannot refresh token", response);
-		}
-
-		[HttpGet("api/test/roles/{role}")]
-		[Authorize(Policy = "Administration")]
-		public IActionResult Roles([FromRoute] string role)
-		{
-			var authorization = Request.Headers[HeaderNames.Authorization];
-
-			if (!CheckRole.IsInRole(authorization, role, _configuration))
-			{
-				return BadRequest("You are not in role: " + role);
-			}
-
-			return Ok("You are in role: " + role);
 		}
 
 

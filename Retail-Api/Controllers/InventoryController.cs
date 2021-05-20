@@ -27,7 +27,6 @@ namespace Retail_Api.Controllers
 		}
 
 		[HttpGet(Routes.InventoryRoutes.All)]
-		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> All()
 		{
 			IEnumerable<Inventory> inv =  await _inventory.getAllInInventoryAsync();
@@ -39,29 +38,7 @@ namespace Retail_Api.Controllers
 			return Ok(inv);
 		}
 
-
-		[HttpPost(Routes.InventoryRoutes.Add)]
-		[Authorize(Policy = "Managment")]
-		public async Task<IActionResult> Add([FromBody] InventoryRequest request)
-		{
-			var authorization = Request.Headers[HeaderNames.Authorization];
-
-			if (!CheckRole.IsInRole(authorization, "Admin", _configuration)){
-				return BadRequest("You don't have permission to add to the inventory");
-			}
-
-			Inventory inv = await _inventory.addToInventoryAsync(request);
-
-			if (inv == null)
-			{
-				return BadRequest("Cannot add this to the inventory");
-			}
-			return Ok(inv);
-		}
-
-
 		[HttpGet(Routes.InventoryRoutes.GetById)]
-		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> GetById([FromRoute] int invId)
 		{
 			Inventory inv = await _inventory.getByIdAsync(invId);
@@ -72,5 +49,20 @@ namespace Retail_Api.Controllers
 			}
 			return Ok(inv);
 		}
+
+		[HttpPost(Routes.InventoryRoutes.Add)]
+		[Authorize(Policy = "Managment")]
+		public async Task<IActionResult> Add([FromBody] InventoryRequest request)
+		{
+			Inventory inv = await _inventory.addToInventoryAsync(request);
+
+			if (inv == null)
+			{
+				return BadRequest("Cannot add this to the inventory");
+			}
+			return Ok(inv);
+		}
+
+
 	}
 }

@@ -27,71 +27,52 @@ namespace Retail_Api.Controllers
 		}
 
 
+		public IActionResult genericResponse<T>(string errorMessage, T response)
+		{
+			if (response == null)
+			{
+				return BadRequest(errorMessage);
+			}
+
+			return Ok(response);
+		}
 
 		[HttpGet(Routes.SaleRoutes.All)]
-		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> All()
 		{
 			IEnumerable<Sale> sales = await _sales.getAllAsync();
-
-			if (sales.FirstOrDefault() == null)
-			{
-				return BadRequest("Cannot find any sales");
-			}
-
-			return Ok(sales);
+			
+			return genericResponse("Cannot find any sales", sales);
 		}
 
 
 		[HttpGet(Routes.SaleRoutes.GetByDate)]
-		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> GetByDate(string date)
 		{
 			IEnumerable<Sale> sales = await _sales.getSalesByDateAsync(date);
 
-			if (sales == null)
-			{
-				return BadRequest("Cannot find any sales created at " + date);
-			}
-
-			return Ok(sales);
+			return genericResponse("Cannot find any sales created at " + date, sales);
 		}
-
-		[HttpPost(Routes.SaleRoutes.CreateSale)]
-		[Authorize(Policy = "Admin,Managment")]
-		public async Task<IActionResult> Create([FromBody] SaleRequest saleReq)
-		{
-			var authorization = Request.Headers[HeaderNames.Authorization];
-
-			if (!CheckRole.IsInRole(authorization, "Admin", _configuration) && !CheckRole.IsInRole(authorization, "Manager", _configuration))
-			{
-				return BadRequest("You don't have permission to add sales");
-			}
-
-			Sale sale = await _sales.createAsync(saleReq);
-
-			if (sale == null)
-			{
-				return BadRequest("Cannot create the sale");
-			}
-
-			return Ok(sale);
-		}
-
 
 		[HttpGet(Routes.SaleRoutes.GetById)]
-		[Authorize(Policy = "Admin,Managment,Cashier")]
 		public async Task<IActionResult> GetById(int saleId)
 		{
 			Sale sale = await _sales.getByIdAsync(saleId);
 
-			if (sale == null)
-			{
-				return BadRequest("Cannot find sale with id :" + saleId);
-			}
-
-			return Ok(sale);
+			return genericResponse("Cannot find sale with id :" + saleId, sale);
 		}
+
+		[HttpPost(Routes.SaleRoutes.CreateSale)]
+		[Authorize(Policy = "Managment")]
+		public async Task<IActionResult> Create([FromBody] SaleRequest saleReq)
+		{
+
+			Sale sale = await _sales.createAsync(saleReq);
+
+			return genericResponse("Cannot create the sale", sale);
+		}
+
+
 
 	}
 }
