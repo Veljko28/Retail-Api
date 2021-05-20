@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Retail_Api.Models.Requests;
 using Retail_Api.Services;
 using Retail_Api.Repositories.Services;
+using System.Security.Cryptography;
 
 namespace Retail_Api.Models.Services
 {
@@ -62,6 +63,22 @@ namespace Retail_Api.Models.Services
 
 			string sql = "exec [AddUser] @Id, @FirstName, @LastName, @Password, @EmailAddress, @DateCreated";
 
+			// HASHING PASSWORD BEGIN 
+
+			byte[] salt;
+			new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+
+			var pbkdf2 = new Rfc2898DeriveBytes(userRequest.Password, salt, 100000);
+			byte[] hash = pbkdf2.GetBytes(20);
+
+
+			byte[] hashBytes = new byte[36];
+			Array.Copy(salt, 0, hashBytes, 0, 16);
+			Array.Copy(hash, 0, hashBytes, 16, 20);
+			string passwordHash = Convert.ToBase64String(hashBytes);
+
+			// HASHING PASSWORD END
+
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
@@ -71,7 +88,7 @@ namespace Retail_Api.Models.Services
 					DateCreated = DateTime.UtcNow,
 					FirstName = userRequest.FirstName,
 					LastName = userRequest.LastName,
-					Password = userRequest.Password,
+					Password = passwordHash,
 				}); ;
 
 				if (rowsModified > 0)
@@ -88,27 +105,41 @@ namespace Retail_Api.Models.Services
 
 		public async Task<TokenResponse> LoginAsync(string email, string password)
 		{
-			User loggedInUser = new User();
-
-			string sql = "exec [GetUser] @EmailAddress, @Password";
+			LoginResponse loginResponse = new LoginResponse();
+			string sql = "exec [GetPasswordByEmail] @EmailAddress";
 
 			using (SqlConnection db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
 			{
 				await db.OpenAsync();
-				var result = await db.QueryAsync<User>(sql, new
+				var result = await db.QueryAsync<LoginResponse>(sql, new
 				{
-					EmailAddress = email,
-					Password = password
+					EmailAddress = email
 				});
-				loggedInUser = result.FirstOrDefault();
+				loginResponse = result.FirstOrDefault();
 			}
 
-			if (loggedInUser == null)
+			if (loginResponse == null)
 			{
 				return null;
 			}
 
-			var roles = await RoleRepository.getUserRolesAsync(loggedInUser.Id, _configuration);
+			// DEHASH THE PASSWORD STORED IN THE DATABASE
+			byte[] hashBytes = Convert.FromBase64String(loginResponse.Password);
+			byte[] salt = new byte[16];
+			Array.Copy(hashBytes, 0, salt, 0, 16);
+
+			var passHash = new Rfc2898DeriveBytes(password, salt, 100000);
+			byte[] hash = passHash.GetBytes(20);
+
+			// COMPARE THE RESULTS 
+
+			for (int i = 0; i < 20; i++)
+				if (hashBytes[i + 16] != hash[i])
+					return null;
+
+
+
+			var roles = await RoleRepository.getUserRolesAsync(loginResponse.Id, _configuration);
 
 			List<string> roleNames = new List<string>();
 
@@ -126,7 +157,7 @@ namespace Retail_Api.Models.Services
 				new Claim(JwtRegisteredClaimNames.Sub, email),
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new Claim(JwtRegisteredClaimNames.Email, email),
-				new Claim("id", loggedInUser.Id),
+				new Claim("id", loginResponse.Id),
 			};
 		
 			foreach (string role in roleNames)
@@ -161,7 +192,7 @@ namespace Retail_Api.Models.Services
 			{
 				Token = tokenHandler.WriteToken(token),
 				JwtId = token.Id,
-				UserId = loggedInUser.Id,
+				UserId = loginResponse.Id,
 				CreatedDate = DateTime.UtcNow,
 				Expires = DateTime.UtcNow.AddMonths(6),
 
