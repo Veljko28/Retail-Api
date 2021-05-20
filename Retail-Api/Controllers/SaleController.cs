@@ -18,12 +18,10 @@ namespace Retail_Api.Controllers
 	public class SaleController : Controller
 	{
 		private readonly ISaleRepository _sales;
-		private readonly IConfiguration _configuration;
 
-		public SaleController(ISaleRepository sales, IConfiguration configuration)
+		public SaleController(ISaleRepository sales)
 		{
 			_sales = sales;
-			_configuration = configuration;
 		}
 
 

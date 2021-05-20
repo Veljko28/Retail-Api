@@ -18,11 +18,9 @@ namespace Retail_Api.Controllers
 	public class SaleDetailController : Controller
 	{
 		private readonly ISaleDetailRepository _saleDetails;
-		private readonly IConfiguration _configuration;
-		public SaleDetailController(ISaleDetailRepository saleDetails, IConfiguration configuration)
+		public SaleDetailController(ISaleDetailRepository saleDetails)
 		{
 			_saleDetails = saleDetails;
-			_configuration = configuration;
 		}
 		public IActionResult genericResponse<T>(string errorMessage, T response)
 		{

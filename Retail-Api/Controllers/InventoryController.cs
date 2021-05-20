@@ -18,12 +18,10 @@ namespace Retail_Api.Controllers
 	public class InventoryController : Controller
 	{
 		private readonly IInventoryRepository _inventory;
-		private readonly IConfiguration _configuration;
 
-		public InventoryController(IInventoryRepository inventory, IConfiguration configuration)
+		public InventoryController(IInventoryRepository inventory)
 		{
 			_inventory = inventory;
-			_configuration = configuration;
 		}
 
 		[HttpGet(Routes.InventoryRoutes.All)]

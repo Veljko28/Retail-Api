@@ -18,12 +18,10 @@ namespace Retail_Api.Controllers
 	public class ProductController : Controller
 	{
 		private IProductRepository _products;
-		private readonly IConfiguration _configuration;
 
-		public ProductController(IProductRepository products, IConfiguration configuration)
+		public ProductController(IProductRepository products)
 		{
 			_products = products;
-			_configuration = configuration;
 		}
 
 		[HttpGet(Routes.ProductRoutes.GetAll)]
