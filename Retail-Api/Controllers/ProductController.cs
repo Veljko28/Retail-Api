@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
+using Retail_Api.Helpers.Queries;
 using Retail_Api.Helpers.Responses;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
@@ -25,14 +26,13 @@ namespace Retail_Api.Controllers
 		}
 
 		[HttpGet(Routes.ProductRoutes.GetAll)]
-		public async Task<IActionResult> GetAll()
+		public async Task<IActionResult> GetAll([FromQuery] PaginationQuery query)
 		{
 			IEnumerable<Product> products = await _products.getAllAsync();
 			if (products == null)
 			{
 				return NotFound("There are no product in the table");
 			}
-
 			return Ok(new PagedResponse<Product>(products) );
 		}
 
