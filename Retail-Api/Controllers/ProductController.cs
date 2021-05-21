@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
+using Retail_Api.Helpers.Responses;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
 using Retail_Api.Repositories.Interfaces;
@@ -32,7 +33,7 @@ namespace Retail_Api.Controllers
 				return NotFound("There are no product in the table");
 			}
 
-			return Ok(products);
+			return Ok(new Response<IEnumerable<Product>>(products) );
 		}
 
 		[HttpGet(Routes.ProductRoutes.GetByName)]
@@ -44,7 +45,7 @@ namespace Retail_Api.Controllers
 				return NotFound("There is no product with name :" + productName);
 			}
 
-			return Ok(product);
+			return Ok(new Response<Product>(product.FirstOrDefault()));
 		}
 
 		[HttpGet(Routes.ProductRoutes.GetById)]
@@ -56,7 +57,7 @@ namespace Retail_Api.Controllers
 				return NotFound("There is no product with id " + productId);
 			}
 
-			return Ok(product);
+			return Ok(new Response<Product>(product));
 		}
 
 
@@ -72,7 +73,7 @@ namespace Retail_Api.Controllers
 				return BadRequest("Invalid Product Input");
 			}
 
-			return Ok(made);
+			return Ok(new Response<Product>(made));
 		}
 
 
@@ -89,7 +90,7 @@ namespace Retail_Api.Controllers
 				return BadRequest("Cannot find product with id " + productId);
 			}
 
-			return Ok("Succefully deleted product with Id: " + productId);
+			return Ok( new Response<string>("Succefully deleted product with Id: " + productId) );
 		}
 
 
@@ -106,7 +107,7 @@ namespace Retail_Api.Controllers
 				return BadRequest("Error while trying to update the product");
 			}
 
-			return Ok(updatedProduct);
+			return Ok(new Response<Product>(updatedProduct));
 		}
 
 	}

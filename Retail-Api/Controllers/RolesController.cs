@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
+using Retail_Api.Helpers.Responses;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
 using Retail_Api.Repositories.Services;
@@ -32,7 +33,7 @@ namespace Retail_Api.Controllers
 				return BadRequest(errorMessage);
 			}
 
-			return Ok(response);
+			return Ok(new Response<T>(response));
 		}
 
 		[HttpGet(Routes.RolesRoutes.GetUserRoles)]
@@ -53,7 +54,7 @@ namespace Retail_Api.Controllers
 				roleNames.Add(await RoleRepository.getRoleNameAsync(r.RoleId, _configuration));
 			}
 
-			return Ok(roleNames);
+			return Ok( new Response<List<string>>(roleNames));
 		}
 
 
@@ -66,7 +67,7 @@ namespace Retail_Api.Controllers
 			{
 				return BadRequest("Cannot find the id of this role");
 			}
-			return Ok(Id);
+			return Ok(new Response<string>(Id));
 		}
 
 
@@ -80,7 +81,7 @@ namespace Retail_Api.Controllers
 				return BadRequest("Cannot delete role from this user");
 			}
 
-			return Ok(deleted);
+			return Ok(new Response<bool>(deleted));
 		}
 
 
@@ -94,7 +95,7 @@ namespace Retail_Api.Controllers
 				return BadRequest("Cannot add role to this user");
 			}
 
-			return Ok(added);
+			return Ok(new Response<bool>(added));
 		}
 	}
 }

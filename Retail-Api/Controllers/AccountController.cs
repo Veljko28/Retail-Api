@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using Retail_Api.Helpers.Responses;
 
 namespace Retail_Api.Controllers
 {
@@ -31,7 +32,7 @@ namespace Retail_Api.Controllers
 				return BadRequest(errorMessage);
 			}
 
-			return Ok(response);
+			return Ok(new Response<T>(response));
 		}
 
 		[HttpGet("api/test/roles/{role}")]
@@ -63,7 +64,7 @@ namespace Retail_Api.Controllers
 
 				if (userId != null)
 				{
-				return Ok(userId);
+				return Ok(new Response<string>(userId) );
 
 				}
 			}

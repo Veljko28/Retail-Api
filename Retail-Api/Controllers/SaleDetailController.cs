@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
+using Retail_Api.Helpers.Responses;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
 using Retail_Api.Repositories.Interfaces;
@@ -28,7 +29,7 @@ namespace Retail_Api.Controllers
 				return BadRequest(errorMessage);
 			}
 
-			return Ok(response);
+			return Ok(new Response<T>(response));
 		}
 
 		[HttpGet(Routes.SaleDetailRoutes.All)]

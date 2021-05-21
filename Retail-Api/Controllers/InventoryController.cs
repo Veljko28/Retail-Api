@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Retail_Api.Helpers;
+using Retail_Api.Helpers.Responses;
 using Retail_Api.Models;
 using Retail_Api.Models.Requests;
 using Retail_Api.Repositories.Interfaces;
@@ -32,7 +33,7 @@ namespace Retail_Api.Controllers
 			{
 				return NotFound("Cannot find any inventory");
 			}
-			return Ok(inv);
+			return Ok(new Response<IEnumerable<Inventory>>(inv));
 		}
 
 		[HttpGet(Routes.InventoryRoutes.GetById)]
@@ -44,7 +45,8 @@ namespace Retail_Api.Controllers
 			{
 				return NotFound("Cannot find this item in the inventory");
 			}
-			return Ok(inv);
+
+			return Ok(new Response<Inventory>(inv));
 		}
 
 		[HttpPost(Routes.InventoryRoutes.Add)]
@@ -57,7 +59,8 @@ namespace Retail_Api.Controllers
 			{
 				return BadRequest("Cannot add this to the inventory");
 			}
-			return Ok(inv);
+
+			return Ok(new Response<Inventory>(inv));
 		}
 
 
