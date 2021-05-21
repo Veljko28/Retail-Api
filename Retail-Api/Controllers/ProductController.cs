@@ -33,7 +33,7 @@ namespace Retail_Api.Controllers
 				return NotFound("There are no product in the table");
 			}
 
-			return Ok(new Response<IEnumerable<Product>>(products) );
+			return Ok(new PagedResponse<Product>(products) );
 		}
 
 		[HttpGet(Routes.ProductRoutes.GetByName)]

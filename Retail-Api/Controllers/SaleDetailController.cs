@@ -37,7 +37,12 @@ namespace Retail_Api.Controllers
 		{
 			IEnumerable<SaleDetail> sales = await _saleDetails.getAllAsync();
 
-			return genericResponse("Cannot find any sale details", sales.FirstOrDefault());
+			if (sales.FirstOrDefault() == null)
+			{
+				return BadRequest("Cannot find any sale details");
+			}
+
+			return Ok(new PagedResponse<SaleDetail>(sales));
 		}
 
 		[HttpGet(Routes.SaleDetailRoutes.GetById)]

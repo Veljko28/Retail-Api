@@ -49,7 +49,12 @@ namespace Retail_Api.Controllers
 		{
 			IEnumerable<Sale> sales = await _sales.getSalesByDateAsync(date);
 
-			return genericResponse("Cannot find any sales created at " + date, sales);
+			if (sales.FirstOrDefault() == null)
+			{
+				return BadRequest("Cannot find any sales on " + date);
+			}
+
+			return Ok(new PagedResponse<Sale>(sales));
 		}
 
 		[HttpGet(Routes.SaleRoutes.GetById)]

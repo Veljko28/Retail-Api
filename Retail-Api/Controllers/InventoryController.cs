@@ -33,7 +33,7 @@ namespace Retail_Api.Controllers
 			{
 				return NotFound("Cannot find any inventory");
 			}
-			return Ok(new Response<IEnumerable<Inventory>>(inv));
+			return Ok(new PagedResponse<Inventory>(inv));
 		}
 
 		[HttpGet(Routes.InventoryRoutes.GetById)]

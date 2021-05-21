@@ -54,7 +54,7 @@ namespace Retail_Api.Controllers
 				roleNames.Add(await RoleRepository.getRoleNameAsync(r.RoleId, _configuration));
 			}
 
-			return Ok( new Response<List<string>>(roleNames));
+			return Ok( new PagedResponse<string>(roleNames));
 		}
 
 
