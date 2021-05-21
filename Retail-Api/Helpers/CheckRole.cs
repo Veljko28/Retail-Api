@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Retail_Api.Helpers
 {
+	// LEGACY CLASS FOR CHECKING IF A USER IS IN A ROLE ( INSTED OF POLICIES ) 
 	public static class CheckRole
 	{
 		private static bool isJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
